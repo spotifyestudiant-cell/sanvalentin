@@ -71,6 +71,21 @@
             position: absolute; /* Importante para que se mueva */
             left: 170px; /* Posición inicial */
         }
+        /* --- EFECTO DE CORAZONES FLOTANTES --- */
+@keyframes hearts {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+.heart {
+    position: fixed;
+    bottom: -10px;
+    color: #ff4d6d;
+    font-size: 20px;
+    user-select: none;
+    pointer-events: none;
+    animation: hearts linear infinite;
+}
     </style>
 </head>
 <body>
