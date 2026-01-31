@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Bárbara ❤️</title>
+    <title>Para mi amorsito ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -56,6 +56,8 @@
             font-family: 'Dancing Script', cursive;
             font-size: 2rem;
             margin: 15px 0;
+            cursor: pointer; /* Para el Easter Egg */
+            user-select: none;
         }
 
         .img-container {
@@ -64,7 +66,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
 
         .img-container img {
@@ -100,18 +101,54 @@
         #btn-no {
             background-color: #adb5bd;
             color: white;
-            position: relative;
             z-index: 99;
+        }
+
+        /* --- ESTILO DEL EASTER EGG (Carta Secreta) --- */
+        #secret-note {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.3);
+            z-index: 2000;
+            width: 80%;
+            max-width: 300px;
+            border: 2px dashed var(--primary-pink);
+        }
+
+        #secret-note p {
+            color: #d63384;
+            font-style: italic;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1999;
         }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay"></div>
+    <div id="secret-note">
+        <h3>💌 Nota Secreta</h3>
+        <p>"Eres el pilar que sostiene mi vida❤️. Gracias por ser tú, quiero muchiiiiiiiiisimo ❤️"</p>
+        <button onclick="closeSecret()" style="background: var(--primary-pink); color: white; padding: 5px 15px; font-size: 0.8rem;">Cerrar</button>
+    </div>
+
     <div class="container" id="main-card">
         <div class="img-container">
             <img id="main-img" src="inicio.gif" alt="❤️">
         </div>
-        <h1 id="question">Bárbara, amorsito... ¿quieres ser mi San Valentín? ❤️</h1>
+        <h1 id="question" onclick="checkEasterEgg()">Bárbara, amorsito... ¿quieres ser mi San Valentín? ❤️</h1>
         
         <div class="buttons" id="button-group">
             <button id="btn-si">¡SÍ! 😍</button>
@@ -126,21 +163,21 @@
         const question = document.getElementById('question');
         
         let noClicks = 0;
-        let isMoving = false;
         let siScale = 1;
+        let isMoving = false;
+        let easterEggCounter = 0;
 
         const frasesNo = [
             "¿Segura? 🥺",
             "¿Piénsalo bien? 💔",
-            "Mira el otro botón... ✨",
-            "¡Última opción! 😭"
+            "Mira el botón rosa... ✨",
+            "¡No me hagas esto! 😭"
         ];
 
         // LOGICA BOTÓN SÍ
         btnSi.addEventListener('click', () => {
             if (noClicks === 0) {
-                question.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Me encantas!";
-                // CAMBIA AQUÍ EL NOMBRE DE TU SEGUNDA IMAGEN
+                question.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Sabía que me amabas!";
                 mainImg.src = "final.gif"; 
                 setTimeout(finalCelebration, 2000);
             } else {
@@ -160,35 +197,54 @@
             if (noClicks < frasesNo.length) {
                 btnNo.innerHTML = frasesNo[noClicks];
                 noClicks++;
-                siScale += 0.4;
+                siScale += 0.5; // El SÍ crece más rápido
                 btnSi.style.transform = `scale(${siScale})`;
             } else {
-                isMoving = true;
+                // ACTIVAR HUIDA
+                if (!isMoving) {
+                    isMoving = true;
+                    btnNo.style.position = 'fixed';
+                    btnNo.innerHTML = "¡A que no!";
+                }
                 moveButton();
             }
         });
 
+        // HUIDA POR MOVIMIENTO DEL RATÓN
         btnNo.addEventListener('mouseover', () => {
             if (isMoving) moveButton();
         });
 
         function moveButton() {
-            // El botón se mueve dentro del área visible del navegador (viewport)
-            // pero restando un margen para que nunca se salga por los bordes.
-            const margin = 100;
-            const x = Math.random() * (window.innerWidth - margin * 2) + margin / 2;
-            const y = Math.random() * (window.innerHeight - margin * 2) + margin / 2;
+            // El padding asegura que no se pegue a los bordes y desaparezca
+            const padding = 100;
+            const x = Math.random() * (window.innerWidth - padding * 2) + padding / 2;
+            const y = Math.random() * (window.innerHeight - padding * 2) + padding / 2;
             
-            btnNo.style.position = 'fixed';
             btnNo.style.left = `${x}px`;
             btnNo.style.top = `${y}px`;
+        }
+
+        // --- EASTER EGG ---
+        function checkEasterEgg() {
+            easterEggCounter++;
+            if (easterEggCounter === 5) {
+                document.getElementById('secret-note').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                easterEggCounter = 0;
+            }
+        }
+
+        function closeSecret() {
+            document.getElementById('secret-note').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
         }
 
         // LLUVIA DE CORAZONES
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            const icons = ['❤️', '💖', '💗', '✨'];
+            const icons = ['❤️', '💖', '💐'];
             heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = Math.random() * 3 + 2 + 's';
