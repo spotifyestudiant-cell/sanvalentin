@@ -38,34 +38,33 @@
             to { transform: translateY(110vh) rotate(360deg); }
         }
 
-        /* --- CONTENEDOR ESTILO CRISTAL --- */
+        /* --- CONTENEDOR --- */
         .container {
             background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 40px;
+            backdrop-filter: blur(10px);
+            padding: 30px;
             border-radius: 30px;
             box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
             border: 2px solid white;
             max-width: 400px;
             width: 85%;
             z-index: 10;
-            position: relative;
         }
 
         h1 {
             color: #d63384;
             font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
-            margin-bottom: 20px;
+            font-size: 2rem;
+            margin: 15px 0;
         }
 
         .img-container {
             width: 100%;
             height: 200px;
-            margin-bottom: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .img-container img {
@@ -79,10 +78,11 @@
             align-items: center;
             gap: 15px;
             min-height: 100px;
+            margin-top: 10px;
         }
 
         button {
-            padding: 15px 25px;
+            padding: 12px 25px;
             font-size: 1.1rem;
             font-weight: bold;
             border: none;
@@ -94,23 +94,22 @@
         #btn-si {
             background-color: var(--primary-pink);
             color: white;
-            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
+            z-index: 100;
         }
 
         #btn-no {
             background-color: #adb5bd;
             color: white;
-            /* El botón No tiene una transición suave para cuando se mueve */
-            transition: all 0.2s ease;
+            position: relative;
+            z-index: 99;
         }
-
     </style>
 </head>
 <body>
 
     <div class="container" id="main-card">
         <div class="img-container">
-            <img id="main-img" src="https://i.pinimg.com/originals/f6/a5/f7/f6a5f7ddff51a40bcc01fa9cf60129a4.gif" alt="Cargando amor...">
+            <img id="main-img" src="inicio.gif" alt="❤️">
         </div>
         <h1 id="question">Bárbara, amorsito... ¿quieres ser mi San Valentín? ❤️</h1>
         
@@ -128,21 +127,21 @@
         
         let noClicks = 0;
         let isMoving = false;
+        let siScale = 1;
 
         const frasesNo = [
             "¿Segura? 🥺",
-            "¿Segurísima? 💔",
-            "Piénsalo otra vez... 🌹",
-            "¡Última oportunidad! 😭"
+            "¿Piénsalo bien? 💔",
+            "Mira el otro botón... ✨",
+            "¡Última opción! 😭"
         ];
 
         // LOGICA BOTÓN SÍ
         btnSi.addEventListener('click', () => {
             if (noClicks === 0) {
-                // Si le da que sí a la primera sin haber tocado el NO
-                question.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Sabía que me amabas!";
-                mainImg.src = "https://i.pinimg.com/originals/91/9d/23/919d239c09641712a1f64f40f28a8d13.gif";
-                
+                question.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Me encantas!";
+                // CAMBIA AQUÍ EL NOMBRE DE TU SEGUNDA IMAGEN
+                mainImg.src = "final.gif"; 
                 setTimeout(finalCelebration, 2000);
             } else {
                 finalCelebration();
@@ -151,9 +150,8 @@
 
         function finalCelebration() {
             question.innerHTML = "¡SABÍA QUE DIRÍAS QUE SÍ! ❤️ <br> Te amo mi princesita.";
-            mainImg.src = "https://i.pinimg.com/originals/07/54/60/0754602f35496412176846f8885b5465.gif"; 
+            mainImg.src = "final.gif"; 
             document.getElementById('button-group').style.display = 'none';
-            // Lluvia intensa
             setInterval(createHeart, 100);
         }
 
@@ -162,48 +160,43 @@
             if (noClicks < frasesNo.length) {
                 btnNo.innerHTML = frasesNo[noClicks];
                 noClicks++;
-                // El botón SÍ crece cada vez que dice que NO
-                btnSi.style.transform = `scale(${1 + (noClicks * 0.3)})`;
+                siScale += 0.4;
+                btnSi.style.transform = `scale(${siScale})`;
             } else {
                 isMoving = true;
                 moveButton();
             }
         });
 
-        // Hacer que el botón escape cuando intenten pasar el ratón por encima
         btnNo.addEventListener('mouseover', () => {
             if (isMoving) moveButton();
         });
 
         function moveButton() {
-            // Calculamos posiciones seguras para que no se salga de la pantalla
-            const padding = 50;
-            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth - padding);
-            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight - padding);
+            // El botón se mueve dentro del área visible del navegador (viewport)
+            // pero restando un margen para que nunca se salga por los bordes.
+            const margin = 100;
+            const x = Math.random() * (window.innerWidth - margin * 2) + margin / 2;
+            const y = Math.random() * (window.innerHeight - margin * 2) + margin / 2;
             
             btnNo.style.position = 'fixed';
-            btnNo.style.left = x + 'px';
-            btnNo.style.top = y + 'px';
+            btnNo.style.left = `${x}px`;
+            btnNo.style.top = `${y}px`;
         }
 
-        // GENERADOR DE CORAZONES
+        // LLUVIA DE CORAZONES
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
             const icons = ['❤️', '💖', '💗', '✨'];
             heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
-            
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = Math.random() * 3 + 2 + 's';
-            heart.style.fontSize = Math.random() * 15 + 15 + 'px';
-            
             document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 5000);
         }
 
-        // Iniciar lluvia suave al cargar
         setInterval(createHeart, 400);
-
     </script>
 </body>
 </html>
