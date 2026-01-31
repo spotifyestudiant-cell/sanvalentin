@@ -55,17 +55,16 @@
             color: #d63384;
             font-family: 'Dancing Script', cursive;
             font-size: 2rem;
-            margin: 15px 0;
-            cursor: pointer; /* Para el Easter Egg */
-            user-select: none;
+            margin: 10px 0;
         }
 
         .img-container {
             width: 100%;
-            height: 200px;
+            height: 180px;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 10px;
         }
 
         .img-container img {
@@ -73,13 +72,35 @@
             border-radius: 15px;
         }
 
+        /* --- INPUT DEL EASTER EGG --- */
+        .easter-egg-input {
+            margin: 15px 0;
+        }
+
+        #date-input {
+            border: 2px solid #ffc2d1;
+            border-radius: 15px;
+            padding: 8px 15px;
+            outline: none;
+            font-family: 'Quicksand', sans-serif;
+            text-align: center;
+            color: #d63384;
+            width: 80%;
+            transition: all 0.3s ease;
+        }
+
+        #date-input:focus {
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 10px rgba(255, 77, 109, 0.2);
+        }
+
+        /* --- BOTONES --- */
         .buttons {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 15px;
-            min-height: 100px;
-            margin-top: 10px;
+            min-height: 80px;
         }
 
         button {
@@ -92,24 +113,14 @@
             transition: transform 0.2s ease;
         }
 
-        #btn-si {
-            background-color: var(--primary-pink);
-            color: white;
-            z-index: 100;
-        }
+        #btn-si { background-color: var(--primary-pink); color: white; z-index: 100; }
+        #btn-no { background-color: #adb5bd; color: white; z-index: 99; }
 
-        #btn-no {
-            background-color: #adb5bd;
-            color: white;
-            z-index: 99;
-        }
-
-        /* --- ESTILO DEL EASTER EGG (Carta Secreta) --- */
+        /* --- NOTA SECRETA --- */
         #secret-note {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: white;
             padding: 30px;
@@ -119,11 +130,6 @@
             width: 80%;
             max-width: 300px;
             border: 2px dashed var(--primary-pink);
-        }
-
-        #secret-note p {
-            color: #d63384;
-            font-style: italic;
         }
 
         .overlay {
@@ -140,7 +146,7 @@
     <div class="overlay" id="overlay"></div>
     <div id="secret-note">
         <h3>💌 Nota Secreta</h3>
-        <p>"Eres el pilar que sostiene mi vida❤️. Gracias por ser tú, quiero muchiiiiiiiiisimo ❤️"</p>
+        <p>"Eres el pilar que sostiene mi vida❤️. Gracias por ser tú, te quiero muchiiiiiiiiisimo ❤️"</p>
         <button onclick="closeSecret()" style="background: var(--primary-pink); color: white; padding: 5px 15px; font-size: 0.8rem;">Cerrar</button>
     </div>
 
@@ -148,7 +154,11 @@
         <div class="img-container">
             <img id="main-img" src="inicio.gif" alt="❤️">
         </div>
-        <h1 id="question" onclick="checkEasterEgg()">Bárbara, amorsito... ¿quieres ser mi San Valentín? ❤️</h1>
+        <h1>¿Quieres ser mi San Valentín? ❤️</h1>
+
+        <div class="easter-egg-input" id="input-wrapper">
+            <input type="text" id="date-input" placeholder="¿Nuestra fecha? (DD/MM/AAAA)">
+        </div>
         
         <div class="buttons" id="button-group">
             <button id="btn-si">¡SÍ! 😍</button>
@@ -160,24 +170,31 @@
         const btnSi = document.getElementById('btn-si');
         const btnNo = document.getElementById('btn-no');
         const mainImg = document.getElementById('main-img');
-        const question = document.getElementById('question');
+        const dateInput = document.getElementById('date-input');
+        const questionText = document.querySelector('h1');
         
         let noClicks = 0;
-        let siScale = 1;
         let isMoving = false;
-        let easterEggCounter = 0;
 
-        const frasesNo = [
-            "¿Segura? 🥺",
-            "¿Piénsalo bien? 💔",
-            "Mira el botón rosa... ✨",
-            "¡No me hagas esto! 😭"
-        ];
+        // LOGICA EASTER EGG (FECHA)
+        dateInput.addEventListener('input', (e) => {
+            if (e.target.value === '24/09/2023') {
+                document.getElementById('secret-note').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                dateInput.value = ""; // Limpiar
+            }
+        });
+
+        function closeSecret() {
+            document.getElementById('secret-note').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
 
         // LOGICA BOTÓN SÍ
         btnSi.addEventListener('click', () => {
+            document.getElementById('input-wrapper').style.display = 'none';
             if (noClicks === 0) {
-                question.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Sabía que me amabas!";
+                questionText.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Sabía que me amabas!";
                 mainImg.src = "final.gif"; 
                 setTimeout(finalCelebration, 2000);
             } else {
@@ -186,72 +203,51 @@
         });
 
         function finalCelebration() {
-            question.innerHTML = "¡SABÍA QUE DIRÍAS QUE SÍ! ❤️ <br> Te amo mi princesita.";
+            questionText.innerHTML = "¡SABÍA QUE DIRÍAS QUE SÍ! ❤️ <br> Te amo mi princesita.";
             mainImg.src = "final.gif"; 
             document.getElementById('button-group').style.display = 'none';
             setInterval(createHeart, 100);
         }
 
-        // LOGICA BOTÓN NO
+        // LOGICA BOTÓN NO (Bucle infinito de escape)
         btnNo.addEventListener('click', () => {
-            if (noClicks < frasesNo.length) {
-                btnNo.innerHTML = frasesNo[noClicks];
+            if (noClicks < 4) {
+                const frases = ["¿Segura?", "¿Piénsalo?", "Mira el rosa...", "¡Noooo!"];
+                btnNo.innerHTML = frases[noClicks];
                 noClicks++;
-                siScale += 0.5; // El SÍ crece más rápido
-                btnSi.style.transform = `scale(${siScale})`;
+                btnSi.style.transform = `scale(${1 + noClicks * 0.4})`;
             } else {
-                // ACTIVAR HUIDA
-                if (!isMoving) {
-                    isMoving = true;
-                    btnNo.style.position = 'fixed';
-                    btnNo.innerHTML = "¡A que no!";
-                }
+                isMoving = true;
                 moveButton();
             }
         });
 
-        // HUIDA POR MOVIMIENTO DEL RATÓN
         btnNo.addEventListener('mouseover', () => {
             if (isMoving) moveButton();
         });
 
         function moveButton() {
-            // El padding asegura que no se pegue a los bordes y desaparezca
-            const padding = 100;
-            const x = Math.random() * (window.innerWidth - padding * 2) + padding / 2;
-            const y = Math.random() * (window.innerHeight - padding * 2) + padding / 2;
+            // Usamos el ancho y alto de la ventana menos el tamaño del botón
+            // Añadimos un pequeño margen de 20px para que no roce el borde
+            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth - 40) + 20;
+            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight - 40) + 20;
             
+            btnNo.style.position = 'fixed';
             btnNo.style.left = `${x}px`;
             btnNo.style.top = `${y}px`;
         }
 
-        // --- EASTER EGG ---
-        function checkEasterEgg() {
-            easterEggCounter++;
-            if (easterEggCounter === 5) {
-                document.getElementById('secret-note').style.display = 'block';
-                document.getElementById('overlay').style.display = 'block';
-                easterEggCounter = 0;
-            }
-        }
-
-        function closeSecret() {
-            document.getElementById('secret-note').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        // LLUVIA DE CORAZONES
+        // CORAZONES
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            const icons = ['❤️', '💖', '💐'];
+            const icons = ['❤️', '💖', '💐', '✨'];
             heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = Math.random() * 3 + 2 + 's';
             document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
+            setTimeout(() => heart.remove(), 5000);
         }
-
         setInterval(createHeart, 400);
     </script>
 </body>
