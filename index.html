@@ -58,18 +58,25 @@
             margin: 10px 0;
         }
 
+        /* --- MARCO DE FOTOS ADAPTABLE --- */
         .img-container {
             width: 100%;
-            height: 180px;
+            height: 250px; /* Altura ideal para fotos */
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border-radius: 20px;
+            background-color: #f8f9fa;
         }
 
         .img-container img {
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Evita que la foto se estire */
             border-radius: 15px;
+            transition: opacity 0.5s ease;
         }
 
         #date-input {
@@ -143,7 +150,7 @@
 
     <div class="container" id="main-card">
         <div class="img-container">
-            <img id="main-img" src="inicio.gif" alt="❤️">
+            <img id="main-img" src="nosotros_inicio.jpg" alt="❤️">
         </div>
         <h1 id="question">Bárbara (amorsito jeje), ¿quieres ser mi San Valentín? ❤️</h1>
 
@@ -167,11 +174,12 @@
         let noClicks = 0;
         let isMoving = false;
 
-        // EASTER EGG
+        // LOGICA EASTER EGG
         dateInput.addEventListener('input', (e) => {
             if (e.target.value === '24/09/2023') {
                 document.getElementById('secret-note').style.display = 'block';
                 document.getElementById('overlay').style.display = 'block';
+                dateInput.value = ""; 
             }
         });
 
@@ -185,7 +193,7 @@
             document.getElementById('input-wrapper').style.display = 'none';
             if (noClicks === 0) {
                 questionText.innerHTML = "¡Vaya, qué rapidez! 😍 <br> ¡Sabía que me amabas!";
-                mainImg.src = "final.gif"; 
+                mainImg.src = "nosotros_final.jpg"; // FOTO FINAL
                 setTimeout(finalCelebration, 2000);
             } else {
                 finalCelebration();
@@ -194,9 +202,9 @@
 
         function finalCelebration() {
             questionText.innerHTML = "¡SABÍA QUE DIRÍAS QUE SÍ! ❤️ <br> Te amo mi princesita.";
-            mainImg.src = "final.gif"; 
+            mainImg.src = "nosotros_final.jpg"; 
             document.getElementById('btn-group').style.display = 'none';
-            if(isMoving) btnNo.style.display = 'none'; // Por si estaba huyendo
+            if(isMoving) btnNo.style.display = 'none'; 
             setInterval(createHeart, 100);
         }
 
@@ -210,7 +218,6 @@
             } else {
                 if(!isMoving) {
                     isMoving = true;
-                    // TRUCO MÁGICO: Sacamos el botón al body para que no desaparezca
                     document.body.appendChild(btnNo);
                     btnNo.style.position = 'fixed';
                     btnNo.style.zIndex = '9999';
@@ -219,7 +226,6 @@
             }
         });
 
-        // MOVIMIENTO (VERSIÓN 1 PURA)
         btnNo.addEventListener('mouseover', () => {
             if (isMoving) moveNoButton();
         });
@@ -227,12 +233,10 @@
         function moveNoButton() {
             const x = Math.random() * (window.innerWidth - btnNo.offsetWidth);
             const y = Math.random() * (window.innerHeight - btnNo.offsetHeight);
-            
             btnNo.style.left = x + 'px';
             btnNo.style.top = y + 'px';
         }
 
-        // CORAZONES
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
